@@ -28,7 +28,7 @@ interface CustomWindow extends Window {
     userChoice: Promise<{ outcome: string }>;
   } | null;
 }
-
+// ..
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const [name, setName] = useState("");
@@ -46,7 +46,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const isStandaloneMode = window.matchMedia("(display-mode: standalone)").matches || 
+      const isStandaloneMode = window.matchMedia("(display-mode: standalone)").matches ||
         !!(window.navigator as Navigator & { standalone?: boolean }).standalone;
       const hasPrompt = !!(window as CustomWindow & typeof globalThis).deferredPrompt;
 
@@ -241,11 +241,10 @@ export default function SettingsPage() {
                     <button
                       key={t.name}
                       onClick={() => setTheme(t.name)}
-                      className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                        isActive
+                      className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${isActive
                           ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/10"
                           : "text-muted-foreground hover:text-foreground"
-                      }`}
+                        }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
                       {t.label}
