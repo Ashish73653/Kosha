@@ -21,10 +21,5 @@
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     }
-  ],
-  "env": {
-    "DATABASE_URL": "@kosha_database_url",
-    "AUTH_SECRET": "@kosha_auth_secret",
-    "NEXTAUTH_URL": "@kosha_nextauth_url"
-  }
+  ]
 }
