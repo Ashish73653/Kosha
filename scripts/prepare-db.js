@@ -7,14 +7,15 @@ const dbUrl = process.env.DATABASE_URL || "";
 if (dbUrl.startsWith("postgres:") || dbUrl.startsWith("postgresql:")) {
   console.log("💎 Production environment detected: Connecting to PostgreSQL database.");
   console.log("💎 Adjusting Prisma schema datasource provider...");
-  
+
+  // ...
   try {
     let schema = fs.readFileSync(schemaPath, "utf8");
-    
+
     // Replace provider = "sqlite" with provider = "postgresql"
     const originalSchema = schema;
     schema = schema.replace(/provider\s*=\s*"sqlite"/g, 'provider = "postgresql"');
-    
+
     if (schema !== originalSchema) {
       fs.writeFileSync(schemaPath, schema);
       console.log("✅ Prisma schema successfully updated to use 'postgresql' provider.");
