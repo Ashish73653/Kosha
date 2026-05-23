@@ -34,6 +34,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { signOut } from "next-auth/react";
 
 interface NavigationItem {
   label: string;
@@ -219,8 +220,19 @@ export function TopNav({ sidebarCollapsed, title, onSearchClick }: TopNavProps) 
   const [mounted, setMounted] = useState(false);
   const [notifications, setNotifications] = useState<DbNotification[]>([]);
   const [readIds, setReadIds] = useState<string[]>([]);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
 
   useEffect(() => {
+    // Fetch user details
+    fetch("/api/user")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && !data.error) {
+          setUser(data);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch user details:", err));
+
     const savedRead = localStorage.getItem("kosha_read_notifications");
     let initialReadIds: string[] = [];
     if (savedRead) {
@@ -390,7 +402,14 @@ export function TopNav({ sidebarCollapsed, title, onSearchClick }: TopNavProps) 
             <Avatar className="w-8 h-8">
               <AvatarImage src="" />
               <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
-                KU
+                {user?.name
+                  ? user.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()
+                  : "KU"}
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
@@ -402,7 +421,10 @@ export function TopNav({ sidebarCollapsed, title, onSearchClick }: TopNavProps) 
               <Settings className="w-4 h-4 mr-2" /> Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive cursor-pointer">
+            <DropdownMenuItem 
+              onClick={() => signOut({ callbackUrl: "/login" })} 
+              className="text-destructive cursor-pointer"
+            >
               <LogOut className="w-4 h-4 mr-2" /> Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>

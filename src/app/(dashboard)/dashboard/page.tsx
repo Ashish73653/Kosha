@@ -51,6 +51,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState("Kosha");
 
   // Fetch dashboard summary stats from API
   useEffect(() => {
@@ -61,6 +62,15 @@ export default function DashboardPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+
+    fetch("/api/user")
+      .then((res) => res.json())
+      .then((u) => {
+        if (u?.name) {
+          setUserName(u.name.split(" ")[0]);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   if (loading) {
@@ -101,7 +111,7 @@ export default function DashboardPage() {
         className="flex items-center justify-between"
       >
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Good evening, Kosha 👋</h2>
+          <h2 className="text-2xl font-bold text-foreground">Good evening, {userName} 👋</h2>
           <p className="text-muted-foreground text-sm mt-0.5">Here&apos;s your live financial overview</p>
         </div>
         <Button
