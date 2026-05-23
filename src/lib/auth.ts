@@ -21,9 +21,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const { email, password } = parsed.data;
 
-        const user = await db.user.findUnique({
+        let user = await db.user.findUnique({
           where: { email },
         });
+
+        // Auto-seed/ensure demo user exists with the correct password
+        if (email === "demo@kosha.app") {
+          if (!user) {
+            user = await db.user.create({
+              data: {
+                name: "Kosha User",
+                email: "demo@kosha.app",
+                password: "password",
+                currency: "INR",
+              },
+            });
+          } else if (!user.password) {
+            user = await db.user.update({
+              where: { email: "demo@kosha.app" },
+              data: { password: "password" },
+            });
+          }
+        }
 
         if (!user || !user.password) return null;
 

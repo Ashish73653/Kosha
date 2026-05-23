@@ -4,20 +4,15 @@ import { auth } from "@/lib/auth";
 
 async function getUserId() {
   const session = await auth();
-  if (session?.user?.id) return session.user.id;
-  
-  let demoUser = await db.user.findUnique({ where: { email: "demo@kosha.app" } });
-  if (!demoUser) {
-    demoUser = await db.user.create({
-      data: { name: "Kosha User", email: "demo@kosha.app", currency: "INR" },
-    });
-  }
-  return demoUser.id;
+  return session?.user?.id || null;
 }
 
 export async function GET() {
   try {
     const userId = await getUserId();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const user = await db.user.findUnique({
       where: { id: userId },
       select: {
@@ -41,6 +36,9 @@ export async function GET() {
 export async function PUT(req: Request) {
   try {
     const userId = await getUserId();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await req.json();
     const { name, email, currency } = body;
 

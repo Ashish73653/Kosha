@@ -4,19 +4,15 @@ import { auth } from "@/lib/auth";
 
 async function getUserId() {
   const session = await auth();
-  if (session?.user?.id) return session.user.id;
-  let demoUser = await db.user.findUnique({ where: { email: "demo@kosha.app" } });
-  if (!demoUser) {
-    demoUser = await db.user.create({
-      data: { name: "Kosha User", email: "demo@kosha.app" },
-    });
-  }
-  return demoUser.id;
+  return session?.user?.id || null;
 }
 
 export async function GET() {
   try {
     const userId = await getUserId();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const goals = await db.savingsGoal.findMany({
       where: { userId },
     });
@@ -40,6 +36,9 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const userId = await getUserId();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await req.json();
     const { name, target, icon, date } = body;
 
@@ -71,6 +70,9 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   try {
     const userId = await getUserId();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await req.json();
     const { id, amount } = body;
 
@@ -109,6 +111,9 @@ export async function DELETE(req: Request) {
     if (!id) return NextResponse.json({ error: "Missing ID" }, { status: 400 });
 
     const userId = await getUserId();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     await db.savingsGoal.deleteMany({
       where: { id, userId },
     });

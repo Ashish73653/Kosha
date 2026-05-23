@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Sparkles, ArrowRight, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,13 +13,33 @@ import { fadeInUp, staggerContainer } from "@/lib/animations";
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    // Demo: redirect to dashboard
-    await new Promise((r) => setTimeout(r, 1200));
-    window.location.href = "/dashboard";
+    setError(null);
+
+    const email = (e.currentTarget.querySelector("#email") as HTMLInputElement)?.value || "";
+    const password = (e.currentTarget.querySelector("#password") as HTMLInputElement)?.value || "";
+
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Invalid email or password");
+        setLoading(false);
+      } else {
+        window.location.href = "/dashboard";
+      }
+    } catch (err: any) {
+      setError("An unexpected error occurred. Please try again.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,6 +68,15 @@ export default function LoginPage() {
             <h1 className="text-2xl font-bold text-foreground">Welcome back</h1>
             <p className="text-muted-foreground text-sm mt-1">Sign in to your financial dashboard</p>
           </motion.div>
+
+          {error && (
+            <motion.div
+              variants={fadeInUp}
+              className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-medium"
+            >
+              {error}
+            </motion.div>
+          )}
 
           <motion.form variants={staggerContainer} onSubmit={handleSubmit} className="space-y-4">
             <motion.div variants={fadeInUp} className="space-y-1.5">

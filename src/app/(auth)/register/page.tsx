@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Sparkles, ArrowRight, Mail, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,12 +13,48 @@ import { fadeInUp, staggerContainer } from "@/lib/animations";
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    window.location.href = "/dashboard";
+    setError(null);
+
+    const name = (e.currentTarget.querySelector("#name") as HTMLInputElement)?.value || "";
+    const email = (e.currentTarget.querySelector("#email") as HTMLInputElement)?.value || "";
+    const password = (e.currentTarget.querySelector("#password") as HTMLInputElement)?.value || "";
+
+    try {
+      // 1. Send register request
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Something went wrong");
+      }
+
+      // 2. Auto login
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Account created, but automatic sign-in failed. Please log in manually.");
+        setLoading(false);
+      } else {
+        window.location.href = "/dashboard";
+      }
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -43,6 +80,15 @@ export default function RegisterPage() {
             <h1 className="text-2xl font-bold text-foreground">Create your account</h1>
             <p className="text-muted-foreground text-sm mt-1">Start your financial journey today — free forever</p>
           </motion.div>
+
+          {error && (
+            <motion.div
+              variants={fadeInUp}
+              className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-medium"
+            >
+              {error}
+            </motion.div>
+          )}
 
           <motion.form variants={staggerContainer} onSubmit={handleSubmit} className="space-y-4">
             <motion.div variants={fadeInUp} className="space-y-1.5">
