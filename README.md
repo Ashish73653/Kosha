@@ -1,36 +1,129 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kosha 💎 — Premium Personal Finance Web App
 
-## Getting Started
+A futuristic, premium personal finance management app built with the latest web technologies.
 
-First, run the development server:
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8)](https://tailwindcss.com)
+
+---
+
+## ✨ Features
+
+- 📊 **Financial Dashboard** — Real-time overview with animated charts
+- 💰 **Transaction Tracking** — Income, expenses, and transfers
+- 🎯 **Budget Management** — Smart budgets with visual progress tracking
+- 🏆 **Savings Goals** — Set and track financial milestones
+- 💳 **Subscription Tracker** — Never miss a recurring charge
+- 📈 **Analytics** — Deep spending pattern insights
+- 🌍 **Net Worth Tracking** — Assets, liabilities, and investments
+- 🔄 **Recurring Payments** — Automated tracking
+- 🌙 **Dark / Light Mode** — Premium themes
+- 📱 **PWA** — Install on Android/iOS, works offline
+
+## 🛠 Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS v4 + shadcn/ui |
+| Animations | Framer Motion 12 |
+| 3D | React Three Fiber + Three.js |
+| Database | SQLite (dev) / PostgreSQL (prod) + Prisma 7 |
+| Auth | NextAuth.js v5 |
+| Charts | Recharts 3 |
+| State | Zustand |
+| PWA | Custom Service Worker |
+| Deployment | Vercel |
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 20+
+- npm 10+
+
+### Setup
 
 ```bash
+# Clone the repository
+git clone <your-repo-url>
+cd kosha
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your values
+
+# Generate Prisma client & migrate database
+npx prisma generate
+npx prisma migrate dev
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Demo Login
+Use the demo button on the login page — any email/password works in dev mode.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📁 Project Structure
 
-## Learn More
+```
+src/
+├── app/
+│   ├── (auth)/           # Login & Register pages
+│   ├── (dashboard)/      # Protected dashboard routes
+│   ├── api/              # API routes
+│   ├── offline/          # PWA offline fallback
+│   ├── layout.tsx        # Root layout
+│   ├── page.tsx          # Landing page
+│   └── manifest.ts       # PWA manifest
+├── components/
+│   ├── ui/               # shadcn/ui components
+│   ├── dashboard/        # Dashboard components
+│   ├── charts/           # Recharts wrappers
+│   ├── three/            # Three.js / R3F components
+│   ├── shared/           # Shared components
+│   └── providers/        # Context providers
+├── lib/
+│   ├── auth.ts           # NextAuth config
+│   ├── db.ts             # Prisma client
+│   ├── utils.ts          # Utility functions
+│   └── animations.ts     # Framer Motion variants
+└── types/
+    └── index.ts          # TypeScript types
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 🌐 Deployment (Vercel)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Push to GitHub
+2. Import in Vercel dashboard
+3. Set environment variables:
+   - `DATABASE_URL` — PostgreSQL connection string
+   - `AUTH_SECRET` — Generate with `openssl rand -base64 32`
+   - `NEXTAUTH_URL` — Your production URL
+4. Deploy!
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+For production PostgreSQL, update `prisma/schema.prisma` datasource provider to `postgresql` and update `prisma.config.ts` with your PostgreSQL URL.
 
-## Deploy on Vercel
+## 🎨 Design System
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The Kosha design system is built on:
+- **Colors**: Electric Indigo (#6366F1) primary, Emerald accent, Space Dark background
+- **Typography**: Inter (variable font)
+- **Glass**: Backdrop blur + transparency layers
+- **Animations**: 60fps GPU-accelerated via Framer Motion
+- **3D**: Ambient particle fields via React Three Fiber
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📱 PWA Installation
+
+- **Android**: Open in Chrome → "Add to Home Screen"
+- **iOS**: Open in Safari → Share → "Add to Home Screen"
+
+---
+
+Built with ♥ by the Kosha team.
